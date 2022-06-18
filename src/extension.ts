@@ -1009,16 +1009,16 @@ export class Ext extends Ecs.System<ExtEvent> {
             if (!win.is_tilable(this)) {
                 return
             }
-            
+
             mon = win.meta.get_monitor()
             work = win.meta.get_workspace().index()
 
             for (const [, compare] of this.windows.iter()) {
                 const is_same_space = compare.meta.get_monitor() === mon
-                    && compare.meta.get_workspace().index() === work ;
+                    && compare.meta.get_workspace().index() === work;
 
                 if (is_same_space && !this.contains_tag(compare.entity, Tags.Floating) && compare.is_maximized() && win.entity[0] !== compare.entity[0]) {
-                        compare.meta.unmaximize(Meta.MaximizeFlags.BOTH);
+                    compare.meta.unmaximize(Meta.MaximizeFlags.BOTH);
                 }
             }
         }
@@ -1060,6 +1060,7 @@ export class Ext extends Ecs.System<ExtEvent> {
 
     /** Triggered when a grab operation has been ended */
     on_grab_end(meta: Meta.Window, op?: any) {
+
         let win = this.get_window(meta);
 
         if (win !== null) {
@@ -1180,7 +1181,7 @@ export class Ext extends Ecs.System<ExtEvent> {
     previously_focused(active: Window.ShellWindow): null | Ecs.Entity {
         for (const id of [1, 0]) {
             const prev = this.prev_focused[id]
-            if (prev && ! Ecs.entity_eq(active.entity, prev)) {
+            if (prev && !Ecs.entity_eq(active.entity, prev)) {
                 return prev;
             }
         }
@@ -1255,7 +1256,7 @@ export class Ext extends Ecs.System<ExtEvent> {
 
                 this.register(Events.window_move(this, win, rect));
             } else {
-                win.move(this, rect, () => {});
+                win.move(this, rect, () => { });
                 // if the resulting dimensions of rect == next
                 if (rect.width == next_area.width && rect.height == next_area.height) {
                     win.meta.maximize(Meta.MaximizeFlags.BOTH)
@@ -1407,6 +1408,7 @@ export class Ext extends Ecs.System<ExtEvent> {
     /** Triggered when a grab operation has been started */
     on_grab_start(meta: null | Meta.Window, op: any) {
         if (!meta) return
+        // this.grab_time = global.get_current_time(); <-- this returns 0?
         this.grab_time = +new Date();  // timestamp
         let win = this.get_window(meta);
         if (win) {
@@ -1474,8 +1476,8 @@ export class Ext extends Ecs.System<ExtEvent> {
 
                         [area, monitor_attachment] = ((win.stack === null && attach_to.stack === null && is_sibling))
                             || (win.stack === null && is_sibling)
-                                ? [fork.area, false]
-                                : [attach_to.meta.get_frame_rect(), false]
+                            ? [fork.area, false]
+                            : [attach_to.meta.get_frame_rect(), false]
                     } else {
                         return true
                     }
@@ -1501,13 +1503,13 @@ export class Ext extends Ecs.System<ExtEvent> {
                     const half_height = area.height / 2
 
                     let new_area: [number, number, number, number] =
-                    orientation === Lib.Orientation.HORIZONTAL
-                        ? swap
-                            ? [area.x, area.y, half_width, area.height]
-                            : [area.x + half_width, area.y, half_width, area.height]
-                        : swap
-                            ? [area.x, area.y, area.width, half_height]
-                            : [area.x, area.y + half_height, area.width, half_height]
+                        orientation === Lib.Orientation.HORIZONTAL
+                            ? swap
+                                ? [area.x, area.y, half_width, area.height]
+                                : [area.x + half_width, area.y, half_width, area.height]
+                            : swap
+                                ? [area.x, area.y, area.width, half_height]
+                                : [area.x, area.y + half_height, area.width, half_height]
 
                     this.overlay.x = new_area[0]
                     this.overlay.y = new_area[1]
@@ -2394,7 +2396,7 @@ export class Ext extends Ecs.System<ExtEvent> {
                         return true
                     },
                     () => update_tiling()
-            )
+                )
         }
 
         function mark_for_reassignment(ext: Ext, fork: Ecs.Entity) {
@@ -2407,7 +2409,7 @@ export class Ext extends Ecs.System<ExtEvent> {
             }
         }
 
-        const [ old_primary, old_displays ] = this.displays
+        const [old_primary, old_displays] = this.displays
 
         const changes = new Map<number, number>()
 
@@ -2849,7 +2851,7 @@ function _show_skip_taskbar_windows(ext: Ext) {
     // Handle the overview
     if (!default_isoverviewwindow_ws) {
         default_isoverviewwindow_ws = Workspace.prototype._isOverviewWindow;
-        Workspace.prototype._isOverviewWindow = function(win: any) {
+        Workspace.prototype._isOverviewWindow = function (win: any) {
             let meta_win = win;
             if (GNOME_VERSION?.startsWith("3.36"))
                 meta_win = win.get_meta_window();
@@ -2865,7 +2867,7 @@ function _show_skip_taskbar_windows(ext: Ext) {
         if (!default_getcaption_workspace) {
             default_getcaption_workspace = Workspace.prototype._getCaption;
             // 3.36 _getCaption
-            Workspace.prototype._getCaption = function() {
+            Workspace.prototype._getCaption = function () {
                 let metaWindow = this._windowClone.metaWindow;
                 if (metaWindow.title)
                     return metaWindow.title;
@@ -2881,7 +2883,7 @@ function _show_skip_taskbar_windows(ext: Ext) {
             default_getcaption_windowpreview = WindowPreview.prototype._getCaption;
             log.debug(`override workspace._getCaption`);
             // 3.38 _getCaption
-            WindowPreview.prototype._getCaption = function() {
+            WindowPreview.prototype._getCaption = function () {
                 if (this.metaWindow.title)
                     return this.metaWindow.title;
 
@@ -2909,7 +2911,7 @@ function _show_skip_taskbar_windows(ext: Ext) {
     if (!default_init_appswitcher) {
         default_init_appswitcher = AppSwitcher.prototype._init;
         // Do not use the Shell.AppSystem apps
-        AppSwitcher.prototype._init = function(_apps: any, altTabPopup: any) {
+        AppSwitcher.prototype._init = function (_apps: any, altTabPopup: any) {
             // Simulate super._init(true);
             SwitcherList.prototype._init.call(this, true);
             this.icons = [];
@@ -2928,7 +2930,7 @@ function _show_skip_taskbar_windows(ext: Ext) {
             // Remove duplicate app names after including skip task bar windows too
             // E.g. Extensions instance plus when opening an extensions prefs window
             // Or Android windows when alt-tabbing (depends on where switch apps is bound)
-            let allWindowsWithSkipTaskBar = allWindows.filter((w,i,a) => {
+            let allWindowsWithSkipTaskBar = allWindows.filter((w, i, a) => {
                 let app: any = windowTracker.get_window_app(w);
                 return i === a.findIndex((wi) => {
                     let w_app: any = windowTracker.get_window_app(wi);
@@ -2959,7 +2961,7 @@ function _show_skip_taskbar_windows(ext: Ext) {
     // Handle switch-windows
     if (!default_getwindowlist_windowswitcher) {
         default_getwindowlist_windowswitcher = WindowSwitcherPopup.prototype._getWindowList;
-        WindowSwitcherPopup.prototype._getWindowList = function() {
+        WindowSwitcherPopup.prototype._getWindowList = function () {
             let workspace = null;
 
             if (this._settings.get_boolean('current-workspace-only')) {
@@ -2968,7 +2970,7 @@ function _show_skip_taskbar_windows(ext: Ext) {
             }
 
             let windows = global.display.get_tab_list(Meta.TabList.NORMAL_ALL,
-                                                      workspace);
+                workspace);
             return windows.map(w => {
                 let meta_win = w.is_attached_dialog() ? w.get_transient_for() : w;
                 if (meta_win) {
@@ -2977,7 +2979,7 @@ function _show_skip_taskbar_windows(ext: Ext) {
                     }
                 }
                 return null;
-            }).filter((w, i, a) => w != null &&  a.indexOf(w) == i);
+            }).filter((w, i, a) => w != null && a.indexOf(w) == i);
         }
     }
 }
